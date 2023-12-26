@@ -10,7 +10,7 @@ import {
 import { PrivyProvider, usePrivy } from "@privy-io/react-auth"
 import { Address, Chain, Hash, Transport, http } from "viem"
 import { CustomSigner } from "./customSigner"
-import { SmartAccountClient, createSmartAccountClient } from "permissionless"
+import { SmartAccountClient, createSmartAccountClient, walletClientToCustomSigner } from "permissionless"
 import { createPimlicoPaymasterClient } from "permissionless/clients/pimlico"
 import { DemoTransactionButton } from "@/components/demo-transaction"
 import { PrivyWagmiConnector } from "@privy-io/wagmi-connector"
@@ -88,7 +88,7 @@ export const PrivyFlow = () => {
     useEffect(() => {
         ;(async () => {
             if (isConnected && walletClient && publicClient) {
-                const customSigner = new CustomSigner(walletClient)
+                const customSigner  = walletClientToCustomSigner(walletClient)
 
                 const safeSmartAccountClient = await signerToSimpleSmartAccount(
                     publicClient,
