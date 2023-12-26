@@ -1,5 +1,5 @@
 "use client"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useAccount, useDisconnect, useWalletClient } from "wagmi"
 import { usePublicClient } from "wagmi"
 import { Loader } from "@/components/loader"
@@ -7,13 +7,17 @@ import {
     SmartAccount,
     signerToSimpleSmartAccount
 } from "permissionless/accounts"
-import { PrivyProvider, usePrivy } from "@privy-io/react-auth"
+import { PrivyProvider, usePrivy, useWallets } from "@privy-io/react-auth"
 import { Address, Chain, Hash, Transport, http } from "viem"
 import { CustomSigner } from "./customSigner"
-import { SmartAccountClient, createSmartAccountClient, walletClientToCustomSigner } from "permissionless"
+import {
+    SmartAccountClient,
+    createSmartAccountClient,
+    walletClientToCustomSigner
+} from "permissionless"
 import { createPimlicoPaymasterClient } from "permissionless/clients/pimlico"
 import { DemoTransactionButton } from "@/components/demo-transaction"
-import { PrivyWagmiConnector } from "@privy-io/wagmi-connector"
+import { PrivyWagmiConnector, usePrivyWagmi } from "@privy-io/wagmi-connector"
 import { WagmiConfig, createConfig, configureChains, sepolia } from "wagmi"
 import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc"
 
@@ -40,12 +44,17 @@ const pimlicoPaymaster = createPimlicoPaymasterClient({
     transport: http(process.env.NEXT_PUBLIC_PIMLICO_PAYMASTER_RPC_HOST!)
 })
 
-export const PrivyFLowProvider = ({ children }: {children: React.ReactNode}) => {
+export const PrivyFLowProvider = ({
+    children
+}: { children: React.ReactNode }) => {
     return (
         <WagmiConfig config={config}>
             <PrivyProvider
                 appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
                 config={{
+                    embeddedWallets: {
+                        createOnLogin: "all-users"
+                    },
                     loginMethods: ["email", "wallet"],
                     appearance: {
                         theme: "light",
@@ -71,9 +80,19 @@ export const PrivyFlow = () => {
             null
         )
     const publicClient = usePublicClient()
+    const { wallets } = useWallets()
     const { data: walletClient } = useWalletClient()
     const [txHash, setTxHash] = useState<string | null>(null)
     const { disconnect } = useDisconnect()
+
+    const { setActiveWallet } = usePrivyWagmi()
+
+    const embeddedWallet = useMemo(
+        () => wallets.find((wallet) => wallet.walletClientType === "privy"),
+        [wallets]
+    )
+
+    useEffect(() => setActiveWallet(embeddedWallet), [embeddedWallet])
 
     const signIn = useCallback(async () => {
         setShowLoader(true)
@@ -88,7 +107,7 @@ export const PrivyFlow = () => {
     useEffect(() => {
         ;(async () => {
             if (isConnected && walletClient && publicClient) {
-                const customSigner  = walletClientToCustomSigner(walletClient)
+                const customSigner = walletClientToCustomSigner(walletClient)
 
                 const safeSmartAccountClient = await signerToSimpleSmartAccount(
                     publicClient,
@@ -96,7 +115,8 @@ export const PrivyFlow = () => {
                         entryPoint: process.env
                             .NEXT_PUBLIC_ENTRYPOINT! as Address,
                         signer: customSigner,
-                        factoryAddress: process.env.NEXT_PUBLIC_FACTORY_ADDRESS! as Address
+                        factoryAddress: process.env
+                            .NEXT_PUBLIC_FACTORY_ADDRESS! as Address
                     }
                 )
 
@@ -116,7 +136,7 @@ export const PrivyFlow = () => {
         setTxHash(txHash)
     }
 
-    if (isConnected && smartAccountClient) {
+    if (isConnected && smartAccountClient && embeddedWallet) {
         return (
             <div>
                 <div>
