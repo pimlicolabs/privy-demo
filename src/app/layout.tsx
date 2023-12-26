@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Web3auth demo',
-  description: 'How to use web3auth as a singer in permissionless',
+  title: 'Privy demo',
+  description: 'How to use privy as a singer in permissionless',
 }
 
 export default function RootLayout({

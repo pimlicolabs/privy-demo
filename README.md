@@ -1,4 +1,4 @@
-This is a demo of how to use [web3auth](https://web3auth.io/) as signer and create a safe smart account using [permissionless](https://github.com/pimlicolabs/permissionless.js)
+This is a demo of how to use [privy](https://www.privy.io/) as signer and create a safe smart account using [permissionless](https://github.com/pimlicolabs/permissionless.js)
 
 ## Installation
 
@@ -23,4 +23,4 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 To learn more about permissionless, take a look at the following resources:
 
 - [permissionless](https://docs.pimlico.io/permissionless) Documentation - start now and send trasnsaction via smart accounts
-- [web3auth](https://nextjs.org/learn) - Web3Auth is a simple, non-custodial auth infrastructure that enables Web3 wallets and applications to provide seamless user logins.
+- [privy](https://docs.privy.io/) - Privy is a simple toolkit for progressive authentication in web3.
