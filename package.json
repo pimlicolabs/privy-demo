@@ -9,14 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@privy-io/react-auth": "^1.52.2",
-    "@privy-io/wagmi-connector": "^0.1.11",
+    "@privy-io/react-auth": "^1.73.2",
+    "@privy-io/wagmi": "^0.2.11",
     "next": "14.0.4",
-    "permissionless": "^0.0.18",
+    "permissionless": "^0.1.36",
     "react": "^18",
     "react-dom": "^18",
-    "viem": "^1.20.1",
-    "wagmi": "^1.4.12"
+    "viem": "^2.17.2",
+    "wagmi": "^2.10.9"
   },
   "devDependencies": {
     "@types/node": "^20",
