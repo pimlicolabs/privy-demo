@@ -1,6 +1,7 @@
 import { Loader } from "@/components/loader"
 import { SmartAccountClient } from "permissionless"
 import { SmartAccount } from "permissionless/accounts"
+import { ENTRYPOINT_ADDRESS_V06_TYPE } from "permissionless/types"
 import { useState } from "react"
 import { Chain, Hash, Transport, zeroAddress } from "viem"
 
@@ -8,7 +9,7 @@ export const DemoTransactionButton = ({
     smartAccountClient,
     onSendTransaction
 }: {
-    smartAccountClient: SmartAccountClient<Transport, Chain, SmartAccount>
+    smartAccountClient: SmartAccountClient<ENTRYPOINT_ADDRESS_V06_TYPE>
     onSendTransaction: (txHash: Hash) => void
 }) => {
     const [loading, setLoading] = useState<boolean>(false)
@@ -16,6 +17,8 @@ export const DemoTransactionButton = ({
     const sendTransaction = async () => {
         setLoading(true)
         const txHash = await smartAccountClient.sendTransaction({
+            // @ts-ignore
+            account: smartAccountClient.account,
             to: zeroAddress,
             data: "0x",
             value: BigInt(0)
