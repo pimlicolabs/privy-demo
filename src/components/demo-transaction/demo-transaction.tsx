@@ -1,29 +1,33 @@
 import { Loader } from "@/components/loader"
 import { SmartAccountClient } from "permissionless"
-import { SmartAccount } from "permissionless/accounts"
-import { ENTRYPOINT_ADDRESS_V06_TYPE } from "permissionless/types"
 import { useState } from "react"
-import { Chain, Hash, Transport, zeroAddress } from "viem"
+import { Hash, zeroAddress } from "viem"
+import { sepolia } from "viem/chains"
 
 export const DemoTransactionButton = ({
     smartAccountClient,
     onSendTransaction
 }: {
-    smartAccountClient: SmartAccountClient<ENTRYPOINT_ADDRESS_V06_TYPE>
+    smartAccountClient: SmartAccountClient
     onSendTransaction: (txHash: Hash) => void
 }) => {
     const [loading, setLoading] = useState<boolean>(false)
 
     const sendTransaction = async () => {
         setLoading(true)
-        const txHash = await smartAccountClient.sendTransaction({
-            // @ts-ignore
-            account: smartAccountClient.account,
-            to: zeroAddress,
-            data: "0x",
-            value: BigInt(0)
-        })
-        onSendTransaction(txHash)
+
+        if (smartAccountClient.account) {
+            const txHash = await smartAccountClient.sendTransaction({
+                account: smartAccountClient.account,
+                chain: sepolia,
+                to: zeroAddress,
+                data: "0x",
+                value: BigInt(0)
+            })
+
+            onSendTransaction(txHash)    
+        }
+
         setLoading(false)
     }
 
